@@ -15,7 +15,8 @@ setup(
     long_description = description,
     long_description_content_type = "text/markdown",
     packages=['FGFinder'],
-    install_requires=['pandas', 'rdkit'],
+    include_package_data=True,
+    install_requires=['pandas<=2.2.2', 'rdkit','numpy<=1.26.4'],
 	classifiers = [
 		'Intended Audience :: Developers',
 		'Intended Audience :: End Users/Desktop',
@@ -28,5 +29,6 @@ setup(
 		'Topic :: Scientific/Engineering :: Artificial Intelligence',
 		'Programming Language :: Python',
 		'Programming Language :: Python :: 3',
-		'Programming Language :: Python :: 3.8']
+		'Programming Language :: Python :: 3.8',
+		'Programming Language :: Python :: 3.10']
 )

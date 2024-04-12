@@ -6,18 +6,16 @@ ABSOLUT_PATH = os.path.dirname(os.path.realpath(__file__))
 
 class FindFG:
     def __init__(self):
-        path = f'{ABSOLUT_PATH}/data/fgsmarts.pkl'
-        self.match_list = []
-        self.match_dict = {}
-        self.path_SMARTS_functional_groups(path)
+        self.path = f'{ABSOLUT_PATH}/data/fgsmarts.pkl'
+        self.df_fg = self.__path_SMARTS_functional_groups(self.path)
 
-    def path_SMARTS_functional_groups(self, path):
+    def __path_SMARTS_functional_groups(self, path):
         '''
         Abre o dataframe dos Smarts de cada grupo funcional
         '''
-        self.df_fg = pd.read_pickle(path, compression='zip')
+        return pd.read_pickle(path, compression='zip')
         
-    def testMatch(self, smile: str, smart: str):
+    def __testMatch(self, smile: str, smart: str):
         """
         testa se tem um match, retorna 1 or 0
         """
@@ -38,20 +36,38 @@ class FindFG:
         except:
             return 0
 
+    def __GetFreqs(self,smile):
+        df_copy = self.df_fg[['Name']].copy()
+        df_copy['Frequency'] = self.df_fg['SMARTS'].apply(lambda x: self.__testMatch(smile, x))
+        df_copy.rename(columns={'Name':'Functional Groups'}, inplace=True)
+
+        return df_copy
+
     def findFunctionalGroups(self, smile):
         '''
         Pesquisa de grupos funcionais para um único smile
         '''
-        df_copy = self.df_fg[['Name']].copy()
-        df_copy['Frequency'] = self.df_fg['SMARTS'].apply(lambda x: self.testMatch(smile, x))
-        df_copy.rename(columns={'Name':'Functional Groups'}, inplace=True)
-        self.match_list = df_copy['Frequency'].values
+
+        df_copy = self.__GetFreqs(smile)
+        
         return df_copy.query('Frequency != 0')
     
-    def functionalGroupASbitvector(self, arg): 
+    def functionalGroupASbitvector(self, smile): 
         '''
         retorna quais grupos funcionais estão presentes
         '''
-        ar  = self.match_list
+        df_copy = self.__GetFreqs(smile)
+
+        match_list = df_copy['Frequency'].values
+
+        ar  = match_list
         ar[ar > 1] = 1
         return ar
+
+
+"""if __name__ == "__main__":
+    smi = 'CCNCCOCC'
+    fgf = FindFG()
+
+    print(fgf.functionalGroupASbitvector(smi))
+    print(fgf.findFunctionalGroups(smi))"""
