@@ -39,6 +39,7 @@ class FindFG:
     def __GetFreqs(self,smile):
         df_copy = self.df_fg[['Name']].copy()
         df_copy['Frequency'] = self.df_fg['SMARTS'].apply(lambda x: self.__testMatch(smile, x))
+        df_copy['SMARTS'] = self.df_fg['SMARTS']
         df_copy.rename(columns={'Name':'Functional Groups'}, inplace=True)
 
         return df_copy
