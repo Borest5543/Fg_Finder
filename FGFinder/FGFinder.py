@@ -1,3 +1,4 @@
+import numpy as np
 import pandas as pd
 from rdkit import Chem
 import os
@@ -43,6 +44,7 @@ class FindFG:
         self.df_fg["mol"] = self.df_fg["SMARTS"].apply(
             lambda smart: Chem.MolFromSmarts(smart, mergeHs=True)
         )
+        self.groups = self.df_fg["Name"].values
         self.SaveData = SaveData
         if self.SaveData:
             self.Data = {}
@@ -164,10 +166,43 @@ class FindFG:
         ar[ar > 1] = 1
         return ar
 
+    def functionalGroupAsVector(self, smile):
+        """
+        Returns vector of functional groups in a molecule.
+
+        Args:
+            smile (str): The SMILES string of the molecule.
+
+        Returns:
+            ndarray:Vector of a functional group.
+        """
+        if self.SaveData:
+            df_copy = smile in self.Data
+            if df_copy:
+                df_copy = self.Data[smile]
+            else:
+                df_copy = self.Data.setdefault(smile, self.GetFreqsMol(smile))
+
+        else:
+            df_copy = self.GetFreqsMol(smile)
+
+        match_list = df_copy["Frequency"].values
+        return match_list
+
 
 """if __name__ == "__main__":
-    smi = 'CCNCCOCC'
+    smi = "CCNCCOCC"
     fgf = FindFG()
 
-    print(fgf.functionalGroupASbitvector(smi))
-    print(fgf.findFunctionalGroups(smi))"""
+    # print(fgf.functionalGroupASbitvector(smi))
+    # print(fgf.findFunctionalGroups(smi))
+    # print(fgf.functionalGroupAsVector(smi))
+    grupos = [fgf.functionalGroupAsVector(smi) for i in range(1000)]
+    grupos = np.vstack(grupos)
+    # Encontrando colunas que não são todas zeros
+    colunas_nao_zero = np.any(grupos != 0, axis=0)
+
+    # Filtrando as colunas que não são todas zeros
+    matriz_filtrada = grupos[:, colunas_nao_zero]
+    colunas = fgf.groups[colunas_nao_zero]
+    print(pd.DataFrame(matriz_filtrada, columns=colunas))"""
