@@ -188,21 +188,3 @@ class FindFG:
 
         match_list = df_copy["Frequency"].values
         return match_list
-
-
-"""if __name__ == "__main__":
-    smi = "CCNCCOCC"
-    fgf = FindFG()
-
-    # print(fgf.functionalGroupASbitvector(smi))
-    # print(fgf.findFunctionalGroups(smi))
-    # print(fgf.functionalGroupAsVector(smi))
-    grupos = [fgf.functionalGroupAsVector(smi) for i in range(1000)]
-    grupos = np.vstack(grupos)
-    # Encontrando colunas que não são todas zeros
-    colunas_nao_zero = np.any(grupos != 0, axis=0)
-
-    # Filtrando as colunas que não são todas zeros
-    matriz_filtrada = grupos[:, colunas_nao_zero]
-    colunas = fgf.groups[colunas_nao_zero]
-    print(pd.DataFrame(matriz_filtrada, columns=colunas))"""
